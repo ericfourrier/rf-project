@@ -24,10 +24,6 @@ class GoogleFinanceStock(object):
         self.df = df
         self._meta = {}
 
-    # def date_converter(self,index):
-    #     """ Convert weird date index to datetime format """
-    #     nb_day = int(float(index)/389)
-
     def get_data(self, convert_to_datetime=True):
         payload = {'q': self.ticker, 'p': '{}d'.format(self.window), 'f': self.col,
                    'i': self.period, 'df': self.df}
@@ -48,7 +44,7 @@ class GoogleFinanceStock(object):
         self._data.loc[index_day, 'DATE'] = 0
         self._data = self._data.astype(float) # convert everything to float
         if convert_to_datetime:
-            self._data['DATE'] = (int(self._meta['INTERVAL']) * self._data['DATE']) + self._data['DATE_D'] + int(self._meta['TIMEZONE_OFFSET']) *60
+            self._data['DATE'] = (int(self._meta['INTERVAL']) * self._data['DATE']) + self._data['DATE_D'] - int(360*60)
             self._data['DATE'] = self._data['DATE'].map(lambda x: dt.datetime.fromtimestamp(x))
         return self._data, self._meta
 
